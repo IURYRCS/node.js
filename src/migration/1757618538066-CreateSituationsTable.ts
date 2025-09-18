@@ -16,7 +16,8 @@ export class CreateSituationsTable1757618538066 implements MigrationInterface {
                 },
                 {
                     name: "nameSituation",
-                    type: "varchar"
+                    type: "varchar",
+                    isUnique: true
                 },
                 {
                     name: "createdAt",
@@ -24,7 +25,7 @@ export class CreateSituationsTable1757618538066 implements MigrationInterface {
                     default: "CURRENT_TIMESTAMP"
                 },
                 {
-                    name: "updateAt",
+                    name: "updatedAt",
                     type: "timestamp",
                     default: "CURRENT_TIMESTAMP",
                     onUpdate: "CURRENT_TIMESTAMP"
