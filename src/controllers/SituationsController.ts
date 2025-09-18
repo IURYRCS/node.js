@@ -8,10 +8,43 @@ router.get("/situations",async(req:Request, res:Response) => {
     try{
     const situationRepository = AppDataSource.getRepository(Situation);
 
-    const situations = await situationRepository.find();
+    const page = Number(req.query.page) || 1;
 
-    res.status(200).json(situations)
+    const limit =1;
+
+    const totalSituations = await situationRepository.count();
+
+    if(totalSituations === 0){
+         res.status(400).json({
+            messagem : "Nenhuma situação encontrada!"
+        });
+        return
+    }
+    const lastPage = (totalSituations/limit)
+
+    if(page > lastPage){
+         res.status(400).json({
+            messagem : `Pagina Invalida. O total de paginas é ${lastPage}`,
+        });
+        return
+    }
+
+    const offset = (page - 1) * limit;
+
+    const situation = await situationRepository.find({
+        take: limit,
+        skip: offset,
+        order: {id: "DESC"}
+    })
+    res.status(200).json({
+        currentPage: page,
+        lastPage,
+        totalSituations,
+        situation,
+    })
     return
+
+
 
 }catch(error){
      res.status(500).json({
