@@ -1,5 +1,6 @@
 import { AppDataSource } from "./data-source"
 import CreateSituationsSeeds from "./seeds/CreateSituationsSeeds";
+import CreateUsersSeeds from "./seeds/CreateUsersSeeds";
 
 const runSeeds = async() => {
     console.log("Conectando com o banco de dados...")

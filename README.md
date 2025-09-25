@@ -94,9 +94,39 @@ npx typeorm migration:create src/migration/CreateUsersTable
 ```
 Executar as migrations para criar as tabelas no banco de dados.
 ```
-
 npx typeorm migration:run -d dist/data-source.js
 ```
 executar as seeds para cadastrar registro de teste nas tabelas no banco de dados.
-´´´
+
+```
 node dist/run-seeds.js
+```
+
+## Como rodar o projeto baixado
+
+Duplicar o arquivo ".env.example" e renomear para ".env".<br>
+Alterar no arquivo .env as credenciais do banco de dados<br>
+
+Instalar todas as dependencias indicada pelo package.json.
+
+```
+npm install
+```
+
+Compilar o arquivo TypeScript. Executar o arquivo gerado.
+
+```
+npm run start:watch
+```
+
+Executar as migrations para criar as tabelas no banco de dados.
+
+```
+npx typeorm migration:run -d dist/data-source.js
+```
+
+Executar as seeds para cadastrar registro de teste nas tabelas no banco de dados.
+
+```
+node dist/run-seeds.js
+```
