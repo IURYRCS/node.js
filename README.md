@@ -84,14 +84,23 @@ npm i --save-dev @types/dotenv
 
 ```
 Criar a Migração que será usada para criar a tabela no banco de dados
-```
 
+```
 npx typeorm migration:create src/migration/CreateSituationsTable
-
-
-npx typeorm migration:create src/migration/CreateUsersTable
-
 ```
+```
+npx typeorm migration:create src/migration/CreateUsersTable
+```
+```
+npx typeorm migration:create src/migration/CreateCategoriesTable
+```
+```
+npx typeorm migration:create src/migration/CreateProductSituationsTable
+```
+```
+npx typeorm migration:create src/migration/CreateProductsTable
+```
+
 Executar as migrations para criar as tabelas no banco de dados.
 ```
 npx typeorm migration:run -d dist/data-source.js
