@@ -52,7 +52,7 @@ export class CreateUsersTable1757618576798 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        const table = await queryRunner.getTable("usars");
+        const table = await queryRunner.getTable("users");
         const foreingkey = table?.foreignKeys.find((fk)=> fk.columnNames.includes("situationId"));
         if(foreingkey){
             await queryRunner.dropForeignKey("users", foreingkey)

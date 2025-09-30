@@ -9,7 +9,7 @@ export default class CreateProductsSeeds {
         console.log("Iniciando a seed para a tabela 'products'...");
 
         const productsRepository = dataSource.getRepository(Products);
-        const categoryRepository = dataSource.getRepository(Categorie);
+        const categorieRepository = dataSource.getRepository(Categorie);
         const productSituationRepository = dataSource.getRepository(ProductSituation);
 
         const existingCount = await productsRepository.count();
@@ -19,30 +19,30 @@ export default class CreateProductsSeeds {
             return;
         }
 
-        const categoryEletronicos = await categoryRepository.findOneBy({ name: "Eletrônicos" });
-        const categoryRoupas = await categoryRepository.findOneBy({ name: "Roupas" });
+        const categorieEletronicos = await categorieRepository.findOneBy({ name: "Eletrônicos" });
+        const categorieRoupas = await categorieRepository.findOneBy({ name: "Roupas" });
 
         const situationDisponivel = await productSituationRepository.findOneBy({ name: "Disponível" });
         const situationEsgotado = await productSituationRepository.findOneBy({ name: "Esgotado" });
 
-        if (!categoryEletronicos || !categoryRoupas || !situationDisponivel || !situationEsgotado) {
+        if (!categorieEletronicos || !categorieRoupas || !situationDisponivel || !situationEsgotado) {
             throw new Error("Categorias ou situações de produto necessárias não encontradas para a seed de produtos.");
         }
 
         const products = [
             {
                 nome: "Smartphone XYZ",
-                category: categoryEletronicos,
+                categorie: categorieEletronicos,
                 productSituation: situationDisponivel,
             },
             {
                 nome: "Camiseta Azul",
-                category: categoryRoupas,
+                categorie: categorieRoupas,
                 productSituation: situationDisponivel,
             },
             {
                 nome: "Notebook ABC",
-                category: categoryEletronicos,
+                categorie: categorieEletronicos,
                 productSituation: situationEsgotado,
             },
         ];

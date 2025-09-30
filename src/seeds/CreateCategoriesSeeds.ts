@@ -4,14 +4,14 @@ import { Categorie } from "../entity/Categories";
 export default class CreateCategoriesSeeds {
 
     public async run(dataSource: DataSource): Promise<void> {
-        console.log("Iniciando a seed para a tabela 'category'...");
+        console.log("Iniciando a seed para a tabela 'categories'...");
 
-        const categoryRepository = dataSource.getRepository(Categorie);
+        const categorieRepository = dataSource.getRepository(Categorie);
 
-        const existingCount = await categoryRepository.count();
+        const existingCount = await categorieRepository.count();
 
         if (existingCount > 0) {
-            console.log("A tabela 'category' já possui dados. Nenhuma alteração foi realizada!");
+            console.log("A tabela 'categorie' já possui dados. Nenhuma alteração foi realizada!");
             return;
         }
 
@@ -21,7 +21,7 @@ export default class CreateCategoriesSeeds {
             { name: "Alimentos" },
         ];
 
-        await categoryRepository.save(categories);
+        await categorieRepository.save(categories);
 
         console.log("Seed concluída com sucesso: categorias cadastradas!");
     }

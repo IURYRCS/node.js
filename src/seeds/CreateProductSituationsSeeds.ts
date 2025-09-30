@@ -4,14 +4,14 @@ import { ProductSituation } from "../entity/ProductSituations";
 export default class CreateProductSituationsSeeds {
 
     public async run(dataSource: DataSource): Promise<void> {
-        console.log("Iniciando a seed para a tabela 'productsituation'...");
+        console.log("Iniciando a seed para a tabela 'productsituations'...");
 
-        const productSituationRepository = dataSource.getRepository(ProductSituation);
+        const productSituationsRepository = dataSource.getRepository(ProductSituation);
 
-        const existingCount = await productSituationRepository.count();
+        const existingCount = await productSituationsRepository.count();
 
         if (existingCount > 0) {
-            console.log("A tabela 'productsituation' já possui dados. Nenhuma alteração foi realizada!");
+            console.log("A tabela 'productsituations' já possui dados. Nenhuma alteração foi realizada!");
             return;
         }
 
@@ -21,7 +21,7 @@ export default class CreateProductSituationsSeeds {
             { name: "Esgotado" },
         ];
 
-        await productSituationRepository.save(productSituations);
+        await productSituationsRepository.save(productSituations);
 
         console.log("Seed concluída com sucesso: situações de produto cadastradas!");
     }

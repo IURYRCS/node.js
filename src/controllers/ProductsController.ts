@@ -13,9 +13,9 @@ router.get("/products", async (req: Request, res: Response) => {
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
 
-        // Para trazer as relações category e productSituation, usar findAndCount com relations
+        // Para trazer as relações categorie e productSituation, usar findAndCount com relations
         const [items, total] = await productsRepository.findAndCount({
-            relations: ["category", "productSituation"],
+            relations: ["categories", "productSituation"],
             skip: (page - 1) * limit,
             take: limit,
             order: { id: "DESC" },
@@ -40,7 +40,7 @@ router.get("/products/:id", async (req: Request, res: Response) => {
 
         const product = await productsRepository.findOne({
             where: { id: parseInt(id) },
-            relations: ["category", "productSituation"],
+            relations: ["categorie", "productSituation"],
         });
 
         if (!product) {
@@ -60,7 +60,7 @@ router.post("/products", async (req: Request, res: Response) => {
         const data = req.body;
         const productsRepository = AppDataSource.getRepository(Products);
 
-        // Criar o produto (assumindo que data.category e data.productSituation são ids)
+        // Criar o produto (assumindo que data.categorie e data.productSituation são ids)
         const product = productsRepository.create(data);
 
         await productsRepository.save(product);

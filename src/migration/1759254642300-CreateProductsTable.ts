@@ -18,7 +18,7 @@ export class CreateProductsTable1686780200000 implements MigrationInterface {
                     type: "varchar",
                 },
                 {
-                    name: "categoryId",
+                    name: "categorieId",
                     type: "int",
                 },
                 {
@@ -40,7 +40,7 @@ export class CreateProductsTable1686780200000 implements MigrationInterface {
         }));
 
         await queryRunner.createForeignKey("products", new TableForeignKey({
-            columnNames: ["categoryId"],
+            columnNames: ["categorieId"],
             referencedTableName: "categories",
             referencedColumnNames: ["id"],
             onDelete: "CASCADE",
@@ -48,7 +48,7 @@ export class CreateProductsTable1686780200000 implements MigrationInterface {
 
         await queryRunner.createForeignKey("products", new TableForeignKey({
             columnNames: ["productSituationId"],
-            referencedTableName: "productsituation",
+            referencedTableName: "productsituations",
             referencedColumnNames: ["id"],
             onDelete: "CASCADE",
         }));
@@ -57,9 +57,9 @@ export class CreateProductsTable1686780200000 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         const table = await queryRunner.getTable("products");
 
-        const foreignKeyCategory = table?.foreignKeys.find(fk => fk.columnNames.indexOf("categoryId") !== -1);
-        if (foreignKeyCategory) {
-            await queryRunner.dropForeignKey("products", foreignKeyCategory);
+        const foreignKeyCategorie = table?.foreignKeys.find(fk => fk.columnNames.indexOf("categorieId") !== -1);
+        if (foreignKeyCategorie) {
+            await queryRunner.dropForeignKey("products", foreignKeyCategorie);
         }
 
         const foreignKeyProductSituation = table?.foreignKeys.find(fk => fk.columnNames.indexOf("productSituationId") !== -1);

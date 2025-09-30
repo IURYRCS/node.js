@@ -11,11 +11,11 @@ export class Products {
     @Column()
     nome!: string;
 
-    @ManyToOne(() => Categorie, (categorie) => categorie.products)
+    @ManyToOne(() => Categorie, (categories) => categories.products)
     @JoinColumn({ name: "categorieId" })
-    categorie!: Categorie;
+    categories!: Categorie;
 
-    @ManyToOne(() => ProductSituation, (productSituation) => productSituation.products)
+    @ManyToOne(() => ProductSituation, (productSituations) => productSituations.products)
     @JoinColumn({ name: "productSituationId" })
     productSituation!: ProductSituation;
 
