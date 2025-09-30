@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm"
 import { Situation } from "./Situations";
 
-@Entity('situations')
+@Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
     id!: number;
@@ -20,6 +20,6 @@ export class User {
     createdAt!: Date;
 
     @Column({type: "timestamp", default:()=> "CURRENT_TIMESTANP", onUpdate: "CURRENT_TIMESTANP"})
-    updateAd!: Date;
+    updatedAt!: Date;
 
 }

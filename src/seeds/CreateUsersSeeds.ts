@@ -1,11 +1,13 @@
 import { DataSource } from "typeorm";
-import { User } from "../entity/Users"; // Ajuste o path conforme sua estrutura (baseado no seu controller)
+import { User } from "../entity/Users";
+import { Situation } from "../entity/Situations"; // Importe a entidade Situation
 
 export default class CreateUsersSeeds {
     public async run(dataSource: DataSource): Promise<void> {
         console.log("Iniciando a seed para a tabela 'users'...");
 
         const userRepository = dataSource.getRepository(User);
+        const situationRepository = dataSource.getRepository(Situation);
 
         const existingCount = await userRepository.count();
 
@@ -14,11 +16,19 @@ export default class CreateUsersSeeds {
             return;
         }
 
+        const situationAtivo = await situationRepository.findOneBy({ id: 1 });
+        const situationInativo = await situationRepository.findOneBy({ id: 2 });
+        const situationPendente = await situationRepository.findOneBy({ id: 3 });
+
+        if (!situationAtivo || !situationInativo || !situationPendente) {
+            throw new Error("Situações necessárias não encontradas no banco.");
+        }
+
         const users = [
-            { nome: "João Silva", email: "joao.silva@email.com", situationId: 1 }, // Ativo
-            { nome: "Maria Oliveira", email: "maria.oliveira@email.com", situationId: 2 }, // Inativo
-            { nome: "Pedro Santos", email: "pedro.santos@email.com", situationId: 3 }, // Pendente
-            { nome: "Ana Costa", email: "ana.costa@email.com", situationId: 1 }, // Ativo
+            { nome: "João Silva", email: "joao.silva@email.com", situation: situationAtivo },
+            { nome: "Maria Oliveira", email: "maria.oliveira@email.com", situation: situationInativo },
+            { nome: "Pedro Santos", email: "pedro.santos@email.com", situation: situationPendente },
+            { nome: "Ana Costa", email: "ana.costa@email.com", situation: situationAtivo },
         ];
 
         await userRepository.save(users);
