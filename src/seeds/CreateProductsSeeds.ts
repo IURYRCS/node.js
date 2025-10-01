@@ -9,7 +9,7 @@ export default class CreateProductsSeeds {
         console.log("Iniciando a seed para a tabela 'products'...");
 
         const productsRepository = dataSource.getRepository(Products);
-        const categorieRepository = dataSource.getRepository(Categorie);
+        const categoriesRepository = dataSource.getRepository(Categorie);
         const productSituationRepository = dataSource.getRepository(ProductSituation);
 
         const existingCount = await productsRepository.count();
@@ -19,8 +19,8 @@ export default class CreateProductsSeeds {
             return;
         }
 
-        const categorieEletronicos = await categorieRepository.findOneBy({ name: "Eletrônicos" });
-        const categorieRoupas = await categorieRepository.findOneBy({ name: "Roupas" });
+        const categorieEletronicos = await categoriesRepository.findOneBy({ name: "Eletrônicos" });
+        const categorieRoupas = await categoriesRepository.findOneBy({ name: "Roupas" });
 
         const situationDisponivel = await productSituationRepository.findOneBy({ name: "Disponível" });
         const situationEsgotado = await productSituationRepository.findOneBy({ name: "Esgotado" });
