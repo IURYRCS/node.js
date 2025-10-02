@@ -14,7 +14,7 @@ export class User {
 
     @ManyToOne(()=> Situation, (situation)=> situation.users)
     @JoinColumn({name: "situationId"})
-    situation!: Situation;
+    situation?: Situation;
 
     @Column({type: "timestamp", default:()=> "CURRENT_TIMESTANP"})
     createdAt!: Date;

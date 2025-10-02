@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { AppDataSource } from "../data-source";
 import { User } from "../entity/Users";
+import { Situation } from "../entity/Situations";
 import { PaginationService } from "../services/PaginationService";
 
 const router = express.Router();
@@ -13,16 +14,33 @@ router.get("/users", async (req: Request, res: Response) => {
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
 
-        // Validação de paginação
         if (page < 1 || limit < 1 || limit > 100) {
             return res.status(400).json({ mensagem: "Parâmetros de paginação inválidos!" });
         }
 
-        const result = await PaginationService.paginate(userRepository, page, limit, { id: "DESC" });
+        const [users, total] = await userRepository.findAndCount({
+            relations: ["situation"],
+            order: { id: "DESC" },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
 
-        return res.status(200).json(result);
+        const formattedUsers = users.map(user => ({
+            id: user.id,
+            nome: user.nome,
+            email: user.email,
+            situationNome: user.situation?.nameSituation ?? null,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        }));
+
+        return res.status(200).json({
+            page,
+            limit,
+            total,
+            data: formattedUsers,
+        });
     } catch (error) {
-        console.error("Erro ao listar usuários:", error);
         return res.status(500).json({ mensagem: "Erro ao listar os usuários!" });
     }
 });
@@ -33,13 +51,15 @@ router.get("/users/:id", async (req: Request, res: Response) => {
         const { id } = req.params;
         const userId = parseInt(id);
 
-        // Validação de ID
         if (isNaN(userId)) {
             return res.status(400).json({ mensagem: "ID inválido!" });
         }
 
         const userRepository = AppDataSource.getRepository(User);
-        const user = await userRepository.findOne({ where: { id: userId } });
+        const user = await userRepository.findOne({
+            where: { id: userId },
+            relations: ["situation"], 
+        });
 
         if (!user) {
             return res.status(404).json({ mensagem: "Usuário não encontrado!" });
@@ -55,21 +75,32 @@ router.get("/users/:id", async (req: Request, res: Response) => {
 // Criar novo usuário
 router.post("/users", async (req: Request, res: Response) => {
     try {
-        const data = req.body;
+        const { nome, email, situationId } = req.body;
 
-        // Validação de campos obrigatórios
-        if (!data.nome || !data.email || !data.situationId) {
+        if (!nome || !email || !situationId) {
             return res.status(400).json({ mensagem: "Campos obrigatórios (nome, email, situationId) estão faltando!" });
         }
 
         const userRepository = AppDataSource.getRepository(User);
-        const newUser  = userRepository.create(data);
+        const situationRepository = AppDataSource.getRepository(Situation);
 
-        await userRepository.save(newUser );
+        const situation = await situationRepository.findOneBy({ id: situationId });
+
+        if (!situation) {
+            return res.status(404).json({ mensagem: "Situação não encontrada!" });
+        }
+
+        const newUser = userRepository.create({
+            nome,
+            email,
+            situation,
+        });
+
+        await userRepository.save(newUser);
 
         return res.status(201).json({
             mensagem: "Usuário cadastrado com sucesso!",
-            user: newUser ,
+            user: newUser,
         });
     } catch (error) {
         console.error("Erro ao cadastrar usuário:", error);
@@ -82,28 +113,42 @@ router.put("/users/:id", async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const userId = parseInt(id);
-        const data = req.body;
+        const { nome, email, situationId } = req.body;
 
-        // Validação de ID
         if (isNaN(userId)) {
             return res.status(400).json({ mensagem: "ID inválido!" });
         }
 
         const userRepository = AppDataSource.getRepository(User);
-        const user = await userRepository.findOne({ where: { id: userId } });
+        const situationRepository = AppDataSource.getRepository(Situation);
+
+        const user = await userRepository.findOne({
+            where: { id: userId },
+            relations: ["situation"],
+        });
 
         if (!user) {
             return res.status(404).json({ mensagem: "Usuário não encontrado!" });
         }
 
-        // Atualizar os dados (merge preserva campos imutáveis como id e createdAt)
-        userRepository.merge(user, data);
-        // Salvar alterações
-        const updatedUser  = await userRepository.save(user);
+        if (nome) user.nome = nome;
+        if (email) user.email = email;
+
+        if (situationId) {
+            const situation = await situationRepository.findOneBy({ id: situationId });
+
+            if (!situation) {
+                return res.status(404).json({ mensagem: "Situação não encontrada!" });
+            }
+
+            user.situation = situation;
+        }
+
+        const updatedUser = await userRepository.save(user);
 
         return res.status(200).json({
             mensagem: "Usuário atualizado com sucesso!",
-            user: updatedUser ,
+            user: updatedUser,
         });
     } catch (error) {
         console.error("Erro ao atualizar usuário:", error);
@@ -117,7 +162,6 @@ router.delete("/users/:id", async (req: Request, res: Response) => {
         const { id } = req.params;
         const userId = parseInt(id);
 
-        // Validação de ID
         if (isNaN(userId)) {
             return res.status(400).json({ mensagem: "ID inválido!" });
         }
@@ -129,7 +173,6 @@ router.delete("/users/:id", async (req: Request, res: Response) => {
             return res.status(404).json({ mensagem: "Usuário não encontrado!" });
         }
 
-        // Remove os dados do banco de dados
         await userRepository.remove(user);
 
         return res.status(200).json({

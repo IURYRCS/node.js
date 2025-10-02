@@ -50,44 +50,45 @@ router.get("/categories/:id", async (req: Request, res: Response) => {
         return;
     }
 });
-
-// Criar nova categoria
+ 
 router.post("/categories", async (req: Request, res: Response) => {
     try {
         const data = req.body;
 
-        if (!data.name) {
-            res.status(400).json({
-                messagem: "O nome da categoria é obrigatório!"
+        if (!data.name || typeof data.name !== 'string' || data.name.trim() === "") {
+            return res.status(400).json({
+                mensagem: "O nome da categoria é obrigatório!"
             });
-            return;
         }
 
         const categorieRepository = AppDataSource.getRepository(Categorie);
 
-        const existingCategorie = await categorieRepository.findOneBy({ name: data.name });
+        const existingCategorie = await categorieRepository.findOneBy({ name: data.name.trim() });
         if (existingCategorie) {
-            res.status(409).json({
-                messagem: "Já existe uma categoria com esse nome!"
+            return res.status(409).json({
+                mensagem: "Já existe uma categoria com esse nome!"
             });
-            return;
         }
 
-        const newCategorie = categorieRepository.create(data);
+        const newCategorie = categorieRepository.create({
+            name: data.name.trim()
+        });
+
         await categorieRepository.save(newCategorie);
 
-        res.status(201).json({
-            messagem: "Categoria cadastrada com sucesso!",
+        return res.status(201).json({
+            mensagem: "Categoria cadastrada com sucesso!",
             categorie: newCategorie
         });
-        return;
+
     } catch (error) {
-        res.status(500).json({
-            messagem: "Erro ao cadastrar a categoria!"
+        console.error("Erro ao cadastrar categoria:", error);
+        return res.status(500).json({
+            mensagem: "Erro ao cadastrar a categoria!"
         });
-        return;
     }
 });
+
 
 // Atualizar categoria
 router.put("/categories/:id", async (req: Request, res: Response) => {
